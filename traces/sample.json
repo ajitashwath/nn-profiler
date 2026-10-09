@@ -1,0 +1,13 @@
+{
+  "model": "mlp",
+  "ops": [
+    { "name": "aten::addmm", "count": 20, "self_time_us": 5200.0,
+      "input_shapes": [[512], [64, 512], [512, 512]], "mem_bytes": 131072 },
+    { "name": "aten::addmm", "count": 10, "self_time_us": 150.0,
+      "input_shapes": [[10], [64, 512], [512, 10]], "mem_bytes": 2560 },
+    { "name": "aten::relu", "count": 20, "self_time_us": 900.0,
+      "input_shapes": [[64, 512]], "mem_bytes": 131072 },
+    { "name": "aten::linear", "count": 30, "self_time_us": 120.0,
+      "input_shapes": [[64, 512], [512, 512], [512]], "mem_bytes": 0 }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "model": "mlp",
+  "ops": [
+    {
+      "name": "aten::linear",
+      "count": 20,
+      "self_time_us": 439.9000000000069,
+      "input_shapes": [
+        [
+          64,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          512
+        ]
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::t",
+      "count": 20,
+      "self_time_us": 322.1999999999989,
+      "input_shapes": [
+        [
+          512,
+          512
+        ]
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::transpose",
+      "count": 20,
+      "self_time_us": 458.29999999999836,
+      "input_shapes": [
+        [
+          512,
+          512
+        ],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::as_strided",
+      "count": 20,
+      "self_time_us": 59.60000000000173,
+      "input_shapes": [
+        [
+          512,
+          512
+        ],
+        [],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::addmm",
+      "count": 20,
+      "self_time_us": 6759.999999999996,
+      "input_shapes": [
+        [
+          512
+        ],
+        [
+          64,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [],
+        []
+      ],
+      "mem_bytes": 2621440
+    },
+    {
+      "name": "aten::expand",
+      "count": 20,
+      "self_time_us": 142.49999999999682,
+      "input_shapes": [
+        [
+          512
+        ],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::as_strided",
+      "count": 20,
+      "self_time_us": 42.70000000000255,
+      "input_shapes": [
+        [
+          512
+        ],
+        [],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::copy_",
+      "count": 20,
+      "self_time_us": 447.1000000000022,
+      "input_shapes": [
+        [
+          64,
+          512
+        ],
+        [
+          64,
+          512
+        ],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::resolve_conj",
+      "count": 50,
+      "self_time_us": 20.799999999998363,
+      "input_shapes": [
+        [
+          64,
+          512
+        ]
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::relu",
+      "count": 20,
+      "self_time_us": 392.3999999999937,
+      "input_shapes": [
+        [
+          64,
+          512
+        ]
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::clamp_min",
+      "count": 20,
+      "self_time_us": 892.100000000004,
+      "input_shapes": [
+        [
+          64,
+          512
+        ],
+        []
+      ],
+      "mem_bytes": 2621440
+    },
+    {
+      "name": "aten::linear",
+      "count": 10,
+      "self_time_us": 112.70000000000437,
+      "input_shapes": [
+        [
+          64,
+          512
+        ],
+        [
+          10,
+          512
+        ],
+        [
+          10
+        ]
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::t",
+      "count": 10,
+      "self_time_us": 93.19999999999254,
+      "input_shapes": [
+        [
+          10,
+          512
+        ]
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::transpose",
+      "count": 10,
+      "self_time_us": 80.40000000000146,
+      "input_shapes": [
+        [
+          10,
+          512
+        ],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::as_strided",
+      "count": 10,
+      "self_time_us": 33.900000000001455,
+      "input_shapes": [
+        [
+          10,
+          512
+        ],
+        [],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::addmm",
+      "count": 10,
+      "self_time_us": 2042.6999999999916,
+      "input_shapes": [
+        [
+          10
+        ],
+        [
+          64,
+          512
+        ],
+        [
+          512,
+          10
+        ],
+        [],
+        []
+      ],
+      "mem_bytes": 25600
+    },
+    {
+      "name": "aten::expand",
+      "count": 10,
+      "self_time_us": 63.10000000000309,
+      "input_shapes": [
+        [
+          10
+        ],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::as_strided",
+      "count": 10,
+      "self_time_us": 22.50000000000182,
+      "input_shapes": [
+        [
+          10
+        ],
+        [],
+        [],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::copy_",
+      "count": 10,
+      "self_time_us": 108.89999999999782,
+      "input_shapes": [
+        [
+          64,
+          10
+        ],
+        [
+          64,
+          10
+        ],
+        []
+      ],
+      "mem_bytes": 0
+    },
+    {
+      "name": "aten::resolve_conj",
+      "count": 10,
+      "self_time_us": 5.000000000007276,
+      "input_shapes": [
+        [
+          64,
+          10
+        ]
+      ],
+      "mem_bytes": 0
+    }
+  ]
+}
