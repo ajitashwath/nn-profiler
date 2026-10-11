@@ -1,0 +1,12 @@
+Model: mlp (float32) Total Self Time: 6.37 ms
+Roofline: 200 GFLOP/s, 20 GB/s, ridge 10.0 FLOP/byte
+
+op                  calls   time(us)      %  us/call   GFLOP/s      AI  %roof  bound      shapes
+aten::addmm            30     5350.0  84.0%    178.3    126.79   24.40   63.4  compute
+aten::relu             20      900.0  14.1%     45.0      0.73    0.12   29.1  memory
+aten::linear           30      120.0   1.9%      4.0         -       -      -  overhead
+
+Why is it slow?
+* 'aten::addmm' takes 84% of time. Start optimizing there. It runs at 126.8 GFLOP/s, 63% of its roofline limit.
+* Time split: compute 84%, memory 14%, overhead 2%, unmodeled 0%.
+* Mostly compute-bound at 63% of peak. Try lower precision / better kernels.

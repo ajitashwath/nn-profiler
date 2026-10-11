@@ -1,65 +1,109 @@
-use crate::{flops, trace::Trace};
+use crate::stats::{self, Config, OpStats};
+use crate::trace::Trace;
 
-const RIDGE: f64 = 10.0;
+fn opt(v: Option<f64>, prec: usize) -> String {
+    match v {
+        Some(x) => format!("{:.*}", prec, x),
+        None => "-".to_string(),
+    }
+}
 
-pub fn print(trace: &Trace) {
-    let total: f64 = trace.ops.iter().map(|o| o.self_time_is).sum();
-    let mut ops: Vec<_> = trace.ops.iter().collect();
-    ops.sort_by(|a, b| b.self_time.us.partial_cmp(&a.self_time_us).unwrap());
+fn shapes(o: &OpStats) -> String {
+    o.input_shapes
+        .iter()
+        .map(|s| {
+            if s.is_empty() {
+                "_".to_string()
+            } else {
+                s.iter()
+                    .map(|d| d.to_string())
+                    .collect::<Vec<_>>()
+                    .join("x")
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
 
+fn top_n(ops: &[OpStats], top: usize) -> &[OpStats] {
+    if top == 0 || top >= ops.len() {
+        ops
+    } else {
+        &ops[..top]
+    }
+}
+
+pub fn print_table(trace: &Trace, ops: &[OpStats], cfg: &Config, top: usize) {
+    let total: f64 = ops.iter().map(|o| o.time_us).sum();
     println!(
-        "Model: {} Total Self Time: {:.2} ms\n",
+        "Model: {} ({}) Total Self Time: {:.2} ms",
         trace.model,
+        trace.dtype,
         total / 1000.0
     );
     println!(
-        "{:<18} {:>6} {:>10} {:>6} {:>9} {:>7}  {}",
-        "op", "calls", "time(us)", "%", "GFLOP/s", "AI", "bound"
+        "Roofline: {} GFLOP/s, {} GB/s, ridge {:.1} FLOP/byte\n",
+        cfg.peak_gflops,
+        cfg.bandwidth_gbs,
+        cfg.ridge()
+    );
+    println!(
+        "{:<18} {:>6} {:>10} {:>6} {:>8} {:>9} {:>7} {:>6}  {:<9}  shapes",
+        "op", "calls", "time(us)", "%", "us/call", "GFLOP/s", "AI", "%roof", "bound"
     );
 
-    let mut mem_time = 0.0;
-    for op in ops.iter().take(15) {
-        let f = flops::flops(op) as f64;
-        let b = flops::bytes(op) as f64;
-        let ai = if b > 0.0 { f / b } else { 0.0 };
-        let gflops = if op.self_time_us > 0.0 {
-            f * op.count as f64 / (op.self_time_us * 1e3)
-        } else {
-            0.0
-        };
-        let bound = if ai < RIDGE { "memory" } else { "compute" };
-        if ai < RIDGE {
-            mem_time += op.self_time_us;
-        }
-        println!(
-            "{:<18} {:>6} {:>10.1} {:>5.1}% {:>9.2} {:>7.2}  {}",
-            op.name,
-            op.count,
-            op.self_time_us,
-            100.0 * op.self_time_us / total,
-            gflops,
-            ai,
-            bound
+    for o in top_n(ops, top) {
+        let line = format!(
+            "{:<18} {:>6} {:>10.1} {:>5.1}% {:>8.1} {:>9} {:>7} {:>6}  {:<9}  {}",
+            o.name,
+            o.calls,
+            o.time_us,
+            o.pct,
+            o.us_per_call,
+            opt(o.gflops, 2),
+            opt(o.ai, 2),
+            opt(o.roofline_pct, 1),
+            o.bound.as_str(),
+            shapes(o)
         );
+        println!("{}", line.trim_end());
     }
 
-    let top = ops[0];
-    println!("Why is it slow?");
-    println!(
-        "* '{}' takes {:.0}% of time. Start optimizing there.",
-        top.name,
-        100.0 * top.self_time_us / total
-    );
-    let mem_pct = 100.0 * mem_time / total;
-    if mem_pct > 50.0 {
+    println!("\nWhy is it slow?");
+    for line in stats::verdict(ops, cfg) {
+        println!("* {}", line);
+    }
+}
+
+pub fn print_json(trace: &Trace, ops: &[OpStats], cfg: &Config, top: usize) {
+    let out = serde_json::json!({
+        "model": trace.model,
+        "dtype": trace.dtype,
+        "peak_gflops": cfg.peak_gflops,
+        "bandwidth_gbs": cfg.bandwidth_gbs,
+        "ridge": cfg.ridge(),
+        "ops": top_n(ops, top),
+        "verdict": stats::verdict(ops, cfg),
+    });
+    println!("{}", serde_json::to_string_pretty(&out).unwrap());
+}
+
+pub fn print_csv(ops: &[OpStats], top: usize) {
+    let num = |v: Option<f64>| v.map(|x| x.to_string()).unwrap_or_default();
+    println!("op,calls,time_us,pct,us_per_call,gflops,ai,roofline_pct,bound,shapes");
+    for o in top_n(ops, top) {
         println!(
-            "* {:.0}% of time is in low-arithmetic-intensity ops: memory-bound. Try op fusion / fewer copies.",
-            mem_pct
-        );
-    } else {
-        println!(
-            "* Mostly compute-bound ({:.0}% memory-bound). Try lower precision / better kernels.",
-            mem_pct
+            "{},{},{},{},{},{},{},{},{},{}",
+            o.name,
+            o.calls,
+            o.time_us,
+            o.pct,
+            o.us_per_call,
+            num(o.gflops),
+            num(o.ai),
+            num(o.roofline_pct),
+            o.bound.as_str(),
+            shapes(o)
         );
     }
 }

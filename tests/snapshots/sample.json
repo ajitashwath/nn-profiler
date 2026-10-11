@@ -1,0 +1,103 @@
+{
+  "bandwidth_gbs": 20.0,
+  "dtype": "float32",
+  "model": "mlp",
+  "ops": [
+    {
+      "ai": 25.585023400936038,
+      "bound": "compute",
+      "calls": 20,
+      "gflops": 129.18153846153845,
+      "input_shapes": [
+        [
+          512
+        ],
+        [
+          64,
+          512
+        ],
+        [
+          512,
+          512
+        ]
+      ],
+      "name": "aten::addmm",
+      "pct": 81.63265306122449,
+      "roofline_pct": 64.59076923076923,
+      "time_us": 5200.0,
+      "us_per_call": 260.0
+    },
+    {
+      "ai": 0.125,
+      "bound": "memory",
+      "calls": 20,
+      "gflops": 0.7281777777777778,
+      "input_shapes": [
+        [
+          64,
+          512
+        ]
+      ],
+      "name": "aten::relu",
+      "pct": 14.1287284144427,
+      "roofline_pct": 29.127111111111113,
+      "time_us": 900.0,
+      "us_per_call": 45.0
+    },
+    {
+      "ai": 4.255539986506824,
+      "bound": "memory",
+      "calls": 10,
+      "gflops": 43.733333333333334,
+      "input_shapes": [
+        [
+          10
+        ],
+        [
+          64,
+          512
+        ],
+        [
+          512,
+          10
+        ]
+      ],
+      "name": "aten::addmm",
+      "pct": 2.3547880690737832,
+      "roofline_pct": 51.38399999999999,
+      "time_us": 150.0,
+      "us_per_call": 15.0
+    },
+    {
+      "ai": null,
+      "bound": "overhead",
+      "calls": 30,
+      "gflops": null,
+      "input_shapes": [
+        [
+          64,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          512
+        ]
+      ],
+      "name": "aten::linear",
+      "pct": 1.8838304552590266,
+      "roofline_pct": null,
+      "time_us": 120.0,
+      "us_per_call": 4.0
+    }
+  ],
+  "peak_gflops": 200.0,
+  "ridge": 10.0,
+  "verdict": [
+    "'aten::addmm' takes 82% of time. Start optimizing there. It runs at 129.2 GFLOP/s, 65% of its roofline limit.",
+    "Time split: compute 82%, memory 16%, overhead 2%, unmodeled 0%.",
+    "Mostly compute-bound at 65% of peak. Try lower precision / better kernels."
+  ]
+}
