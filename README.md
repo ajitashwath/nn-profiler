@@ -1,7 +1,7 @@
 # Neural Network Profiler
 A Rust CLI that reads a per-op PyTorch trace and tells you which ops are slow, and whether they're compute-bound, memory-bound or overhead-bound.
 
-Needs Rust 1.85 or newer (`edition = "2024"`).
+Needs Rust 1.85 or newer.
 
 ## Run it
 
